@@ -1,0 +1,73 @@
+<!doctype html>
+<title>The Pixel Project</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/favicon.png">
+<link rel="shortcut icon" href="/static/favicon.ico">
+{{ JSGlue.include() }}
+{% block javascript %}
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+var runningFlag=4;
+var positionsQueue=[];
+var pixelPos=[];
+window.onload = function() {
+  if (document.getElementById('myviewer')){
+    mybtn();
+  }
+};
+
+function mybtn() {
+  (runningFlag++);
+  runningFlag=(runningFlag)%5;
+  document.getElementById("myviewer").src = Flask.url_for("viewr", { "runningFlag": runningFlag});
+  var vmbutton=document.getElementById("mbutton");
+  vmbutton.style.backgroundColor="#268bd2";
+  if(runningFlag==0){
+    vmbutton.textContent="Initialize";
+    //do nothing here
+  }
+  else if(runningFlag==1){
+    //initialize FGBG. Change to next state
+    var init = document.createElement("img");init.src = Flask.url_for("initializefgbg");
+    vmbutton.textContent="Set Play Area";
+    positionsQueue=[];//clear
+  }
+  else if(runningFlag==2){
+    //send the game area co-ord
+    var gArea= document.createElement("img");gArea.src = Flask.url_for("setplayarea",{ "onex": positionsQueue[0],"oney": positionsQueue[1],
+            "twox": positionsQueue[2],"twoy": positionsQueue[3],"threex": positionsQueue[4],"threey": positionsQueue[5],"fourx": positionsQueue[6],"foury": positionsQueue[7]});
+    vmbutton.textContent="Initialize Pixel";
+    positionsQueue=[];//clear
+  }
+  else if(runningFlag==3){
+    //send the game area co-ord
+    var pix= document.createElement("img");pix.src = Flask.url_for("setpixel",{ "onex": positionsQueue[0],"oney": positionsQueue[1],"twox": positionsQueue[2],"twoy": positionsQueue[3]});
+    vmbutton.textContent="Start Tracking";
+  }
+  else {
+    vmbutton.textContent="Abort Tracking";
+  }
+}
+
+$(function() {
+$("#myviewer").click(function(e) {
+  var offset = $(this).offset();
+  var relativeX = Math.floor(e.pageX - offset.left);
+  var relativeY = Math.floor(e.pageY - offset.top);
+  positionsQueue.push(relativeX);
+  positionsQueue.push(relativeY);
+  });
+});
+</script>
+
+{% endblock %}
+
+<div class=container>
+  <h1>The Pixel Project</h1>
+  {% for message in get_flashed_messages() %}
+  <div class=flash>{{ message }}</div>
+  {% endfor %}
+  {% block body %}{% endblock %}
+
+</div>
+</div>
