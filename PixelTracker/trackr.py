@@ -124,6 +124,9 @@ class Trackr(object):
     def getCurrentPos(self):
         if self.currentPos is not None:
             pos=self.pred[-1]
+            x=pos[0]
+            y=pos[1]
+            pos=[x/self.playAreaWidth,y/self.playAreaHeight]
         else:
             pos = [0,0]
         return pos
