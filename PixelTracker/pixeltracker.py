@@ -61,6 +61,12 @@ def heading():
     cheading = mTrackr.getCurrentHeading()
     return str(cheading)
 
+@app.route('/currentPos')
+def currentPos():
+    cPos = mTrackr.getCurrentPos()
+    return str(cPos[0])+','+str(cPos[1])
+
+
 @app.route('/initializefgbg')
 def initializefgbg():
     global mTrackr
@@ -88,7 +94,7 @@ def frameGen(runningFlag):
     db = LocalProxy(connect_db)
     while True:
         cheading = mTrackr.getCurrentHeading()
-        print(cheading)
+        cPos = mTrackr.getCurrentPos()
         db.execute('insert or replace into entries (id, heading) values (?,?)',
                   [1, int(cheading)])
         db.commit()

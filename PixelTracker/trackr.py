@@ -119,3 +119,11 @@ class Trackr(object):
         else:
             headingRad=0
         return headingRad
+
+
+    def getCurrentPos(self):
+        if self.currentPos is not None:
+            pos=self.pred[-1]
+        else:
+            pos = [0,0]
+        return pos
